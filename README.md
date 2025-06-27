@@ -54,7 +54,7 @@ ecommerce/
 │   ├── views.py
 │   ├── urls.py
 │   └── forms.py
-├── .gitignore           # Git ignore file (optional, but good practice)
+├── .gitignore           # Git ignore file
 ├── db.sqlite3
 ├── manage.py
 └── requirements.txt     # Project dependencies
