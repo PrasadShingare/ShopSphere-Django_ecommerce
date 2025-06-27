@@ -64,7 +64,7 @@ ecommerce/
 
 1.  **Clone the repository**:
     ```bash
-    git clone <your-repository-url>
+    git clone https://github.com/PrasadShingare/ShopSphere-Django_ecommerce.git
     cd ecommerce
     ```
 2.  **Create a virtual environment** (optional but highly recommended):
