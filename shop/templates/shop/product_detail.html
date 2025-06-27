@@ -1,0 +1,75 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    Details about {{ product.name }}
+{% endblock %}
+
+{% block content %}
+<nav class="bg-gray-800 p-4 shadow-lg">
+    <div class="container mx-auto flex justify-between items-center">
+        <a class="text-3xl font-extrabold text-indigo-400 hover:text-indigo-300 transition duration-300" href="/">
+            ShopSphere
+        </a>
+        <div class="flex items-center space-x-4">
+            <form method="post" action="{% url 'logout' %}" class="inline-block">
+                {% csrf_token %}
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1">
+                    Logout
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container mx-auto px-4 py-12">
+    <div class="flex justify-center mb-10">
+        <div class="w-full md:w-3/4 lg:w-2/3 xl:w-1/2">
+            <div class="bg-gray-800 rounded-xl shadow-2xl p-8 border border-gray-700">
+                <div class="mb-8 text-center">
+                    <h3 class="text-4xl font-bold text-gray-100 leading-tight">
+                        {{ product.name }}
+                    </h3>
+                    <p class="text-gray-400 mt-2 text-lg">Detailed information about the product.</p>
+                </div>
+
+                <div class="mb-8 p-6 bg-gray-700 rounded-lg shadow-inner">
+                    {% if product.image %}
+                        <div class="mb-6 flex justify-center">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                                 class="max-w-full h-auto rounded-lg shadow-lg object-contain"
+                                 style="max-height: 400px; width: auto;"> {# Added max-height for better image control #}
+                        </div>
+                    {% else %}
+                        <div class="mb-6 text-center text-gray-400 text-lg py-4 border border-dashed border-gray-600 rounded-lg">
+                            No image uploaded for this product.
+                        </div>
+                    {% endif %}
+
+                    <div class="space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
+                            <div class="font-semibold text-gray-300 text-lg w-32 flex-shrink-0">Description:</div>
+                            <div class="text-gray-100 text-base flex-grow">{{ product.description|default:"No description provided." }}</div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
+                            <div class="font-semibold text-gray-300 text-lg w-32 flex-shrink-0">Price:</div>
+                            <div class="text-gray-100 text-base font-bold">${{ product.price|floatformat:2 }}</div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
+                            <div class="font-semibold text-gray-300 text-lg w-32 flex-shrink-0">Stock:</div>
+                            <div class="text-gray-100 text-base">{{ product.stock }} units</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-8">
+                    <a href="{% url 'products' %}" class="inline-flex items-center px-8 py-4 border border-transparent text-lg font-bold rounded-full shadow-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                        <svg class="h-6 w-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Back to Products
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

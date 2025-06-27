@@ -1,0 +1,313 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    Products form
+{% endblock %}
+
+{% block content %}
+<nav class="bg-gray-800 p-4 shadow-lg">
+    <div class="container mx-auto flex justify-between items-center">
+        <a class="text-3xl font-extrabold text-indigo-400 hover:text-indigo-300 transition duration-300" href="/">
+            ShopSphere
+        </a>
+        <div class="flex items-center space-x-4">
+            <form method="post" action="{% url 'logout' %}" class="inline-block">
+                {% csrf_token %}
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1">
+                    Logout
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container mx-auto px-4 py-12">
+    <div class="flex justify-center mb-10">
+        <div class="w-full md:w-3/4 lg:w-2/3 xl:w-1/2">
+            <div class="bg-gray-800 rounded-xl shadow-2xl p-8 border border-gray-700">
+                <div class="mb-8 text-center">
+                    <h3 class="text-4xl font-bold text-gray-100 leading-tight">
+                        {% if product %}Edit Product{% else %}Add New Product{% endif %}
+                    </h3>
+                    <p class="text-gray-400 mt-2 text-lg">
+                        {% if product %}Update the details of {{ product.name }}.{% else %}Fill out the form to add a new product.{% endif %}
+                    </p>
+                </div>
+
+                <form id="productForm" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="space-y-6"> {# Use space-y for vertical spacing between form groups #}
+
+                        <div class="flex flex-col">
+                            <label for="name" class="block text-gray-300 text-lg font-medium mb-2">Product Name</label>
+                            <input type="text" name="name" id="name"
+                                   class="block w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                                   value="{{ product.name|default_if_none:'' }}"
+                                   placeholder="Enter product name" required>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="description" class="block text-gray-300 text-lg font-medium mb-2">Description</label>
+                            <textarea id="description" name="description" rows="5"
+                                      class="block w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                                      placeholder="Enter detailed description" required>{{ product.description|default_if_none:'' }}</textarea>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="price" class="block text-gray-300 text-lg font-medium mb-2">Price</label>
+                            <input type="number" id="price" name="price" step="0.01"
+                                   class="block w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                                   value="{{ product.price|default_if_none:'' }}"
+                                   placeholder="Enter price (e.g., 29.99)" required>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="stock" class="block text-gray-300 text-lg font-medium mb-2">Stock</label>
+                            <input type="number" id="stock" name="stock"
+                                   class="block w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                                   value="{{ product.stock|default_if_none:'' }}"
+                                   placeholder="Enter available stock" required>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="image" class="block text-gray-300 text-lg font-medium mb-2">Product Image</label>
+                            <input type="file" name="image" id="image" accept="image/*"
+                                   class="block w-full text-gray-100
+                                           file:mr-4 file:py-2 file:px-4
+                                           file:rounded-full file:border-0
+                                           file:text-sm file:font-semibold
+                                           file:bg-indigo-500 file:text-white
+                                           hover:file:bg-indigo-600 transition duration-300
+                                           cursor-pointer">
+
+                            <div class="mt-4 p-4 bg-gray-700 rounded-lg shadow-inner border border-gray-600">
+                                <p class="text-gray-400 text-sm mb-3">Image Preview:</p>
+                                <div id="imagePreviewContainer" class="flex justify-center items-center h-48 w-full bg-gray-600 rounded-lg overflow-hidden border border-dashed border-gray-500">
+                                    {% if product.image %}
+                                        <img id="currentImageDisplay" src="{{ product.image.url }}" alt="Current Product Image"
+                                             class="max-w-full max-h-full object-contain rounded-lg">
+                                    {% else %}
+                                        <span id="noImageText" class="text-gray-400 text-lg">No Image Selected</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="mt-10 flex flex-wrap justify-center gap-6"> {# Changed to flex-wrap and gap for better responsiveness #}
+                        {# Go back to Products Button #}
+                        <a href="{% url 'products' %}"
+                           class="inline-flex items-center px-8 py-4 border border-transparent text-xl font-bold rounded-full shadow-lg text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                            <svg class="h-7 w-7 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                            Go back to Products
+                        </a>
+
+                        {# Preview Product Button #}
+                        <button type="button" id="previewButton"
+                                class="inline-flex items-center px-8 py-4 border border-transparent text-xl font-bold rounded-full shadow-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                            <svg class="h-7 w-7 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            Preview Product
+                        </button>
+
+                        {# Save Product Button #}
+                        <button type="submit" id="submitButton"
+                                class="inline-flex items-center px-10 py-4 border border-transparent text-xl font-bold rounded-full shadow-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                            <svg class="h-7 w-7 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Save Product
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Preview Modal #}
+<div id="previewModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 backdrop-blur-sm flex justify-center items-center z-50 hidden opacity-0 transition-opacity duration-300 ease-out">
+    <div class="bg-gray-800 rounded-xl shadow-2xl p-8 max-w-xl w-full border border-gray-700 transform scale-95 transition-transform duration-300 ease-out">
+        <h3 class="text-3xl font-bold text-indigo-400 mb-6 text-center">Product Preview</h3>
+
+        <div class="space-y-4 text-gray-200">
+            <div class="flex items-start">
+                <span class="font-semibold w-28 flex-shrink-0">Name:</span>
+                <span id="previewName" class="flex-grow"></span>
+            </div>
+            <div class="flex items-start">
+                <span class="font-semibold w-28 flex-shrink-0">Description:</span>
+                <span id="previewDescription" class="flex-grow whitespace-pre-wrap"></span>
+            </div>
+            <div class="flex items-start">
+                <span class="font-semibold w-28 flex-shrink-0">Price:</span>
+                <span id="previewPrice" class="flex-grow"></span>
+            </div>
+            <div class="flex items-start">
+                <span class="font-semibold w-28 flex-shrink-0">Stock:</span>
+                <span id="previewStock" class="flex-grow"></span>
+            </div>
+            <div class="flex flex-col items-center pt-4">
+                <span class="font-semibold mb-2">Image:</span>
+                <div id="previewImageContainer" class="flex justify-center items-center h-48 w-full bg-gray-700 rounded-lg overflow-hidden border border-dashed border-gray-600">
+                    <img id="previewImageDisplay" src="" alt="Product Image Preview" class="max-w-full max-h-full object-contain rounded-lg hidden">
+                    <span id="previewNoImageText" class="text-gray-400 text-lg">No Image</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-around space-x-4 mt-8">
+            <button type="button" id="editButton" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
+                Edit
+            </button>
+            <button type="button" id="submitFormButton" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
+                Confirm & Save
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const productForm = document.getElementById('productForm');
+        const previewButton = document.getElementById('previewButton');
+        const submitButton = document.getElementById('submitButton'); // The original submit button
+
+        // Image Preview Elements (from previous update)
+        const imageInput = document.getElementById('image');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        const currentImageDisplay = document.getElementById('currentImageDisplay');
+        const noImageText = document.getElementById('noImageText');
+
+        let livePreviewImage = document.getElementById('livePreviewImage'); // Renamed for clarity
+        if (!livePreviewImage) {
+            livePreviewImage = document.createElement('img');
+            livePreviewImage.id = 'livePreviewImage';
+            livePreviewImage.classList.add('max-w-full', 'max-h-full', 'object-contain', 'rounded-lg', 'hidden');
+            imagePreviewContainer.appendChild(livePreviewImage);
+        }
+
+        // --- Live Image Preview Logic ---
+        imageInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (currentImageDisplay) currentImageDisplay.classList.add('hidden');
+                    if (noImageText) noImageText.classList.add('hidden');
+                    livePreviewImage.src = e.target.result;
+                    livePreviewImage.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                livePreviewImage.classList.add('hidden');
+                livePreviewImage.src = '';
+                if (currentImageDisplay && currentImageDisplay.src) {
+                    currentImageDisplay.classList.remove('hidden');
+                } else {
+                    if (noImageText) noImageText.classList.remove('hidden');
+                }
+            }
+        });
+
+        // --- Full Form Preview Modal Elements ---
+        const previewModal = document.getElementById('previewModal');
+        const previewName = document.getElementById('previewName');
+        const previewDescription = document.getElementById('previewDescription');
+        const previewPrice = document.getElementById('previewPrice');
+        const previewStock = document.getElementById('previewStock');
+        const previewImageDisplay = document.getElementById('previewImageDisplay'); // For modal preview
+        const previewNoImageText = document.getElementById('previewNoImageText'); // For modal no image text
+        const editButton = document.getElementById('editButton');
+        const submitFormButton = document.getElementById('submitFormButton'); // Button inside the preview modal
+
+        // --- Functions to show/hide the preview modal ---
+        function showPreviewModal() {
+            previewModal.classList.remove('hidden', 'opacity-0');
+            previewModal.classList.add('flex', 'opacity-100');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function hidePreviewModal() {
+            previewModal.classList.remove('flex', 'opacity-100');
+            previewModal.classList.add('hidden', 'opacity-0');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        // --- Populate Preview Modal Function ---
+        function populatePreviewModal() {
+            previewName.textContent = document.getElementById('name').value;
+            previewDescription.textContent = document.getElementById('description').value;
+            previewPrice.textContent = `$${parseFloat(document.getElementById('price').value || 0).toFixed(2)}`;
+            previewStock.textContent = `${document.getElementById('stock').value || 0} units`;
+
+            const selectedFile = imageInput.files[0];
+            if (selectedFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImageDisplay.src = e.target.result;
+                    previewImageDisplay.classList.remove('hidden');
+                    previewNoImageText.classList.add('hidden');
+                };
+                reader.readAsDataURL(selectedFile);
+            } else if (currentImageDisplay && !currentImageDisplay.classList.contains('hidden') && currentImageDisplay.src) {
+                // If no new file selected but there's a current existing image
+                previewImageDisplay.src = currentImageDisplay.src;
+                previewImageDisplay.classList.remove('hidden');
+                previewNoImageText.classList.add('hidden');
+            } else {
+                // No image (neither new nor existing)
+                previewImageDisplay.src = '';
+                previewImageDisplay.classList.add('hidden');
+                previewNoImageText.classList.remove('hidden');
+            }
+        }
+
+        // --- Event Listeners for Preview Modal ---
+        previewButton.addEventListener('click', function(event) {
+            // Prevent default form submission when preview button is clicked
+            event.preventDefault();
+
+            // Perform basic form validation before showing preview
+            const formInputs = productForm.querySelectorAll('[required]');
+            let formIsValid = true;
+            formInputs.forEach(input => {
+                if (!input.value) {
+                    formIsValid = false;
+                    // Optional: Add some visual feedback for invalid input here
+                    input.classList.add('border-red-500'); // Example: highlight invalid field
+                } else {
+                    input.classList.remove('border-red-500');
+                }
+            });
+
+            if (formIsValid) {
+                populatePreviewModal();
+                showPreviewModal();
+            } else {
+                alert('Please fill in all required fields before previewing.'); // Use custom modal for alerts later
+            }
+        });
+
+        editButton.addEventListener('click', hidePreviewModal); // "Edit" button closes the modal
+
+        submitFormButton.addEventListener('click', function() {
+            // When "Confirm & Save" is clicked in the modal, submit the actual form
+            productForm.submit();
+            hidePreviewModal(); // Close modal immediately
+        });
+
+        // Optional: Close modal if user clicks outside of it (on the backdrop)
+        previewModal.addEventListener('click', function(event) {
+            if (event.target === previewModal) {
+                hidePreviewModal();
+            }
+        });
+        // Optional: Close modal if Escape key is pressed
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && !previewModal.classList.contains('hidden')) {
+                hidePreviewModal();
+            }
+        });
+    });
+</script>
+{% endblock %}
