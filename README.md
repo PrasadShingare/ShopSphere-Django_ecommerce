@@ -58,7 +58,7 @@ ecommerce/
 ├── db.sqlite3
 ├── manage.py
 └── requirements.txt     # Project dependencies
----
+```
 
 ## Setup Instructions
 
